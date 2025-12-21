@@ -25,7 +25,7 @@ model User {
   // Relations
   skills        String[]  // Array of skills
   assessments   Assessment[]
-  resume        Resume?
+  resumes       Resume[]
   coverLetter   CoverLetter[]
   jobMatches    JobMatch[]
 }
@@ -46,13 +46,21 @@ model Assessment {
 
 model Resume {
   id          String    @id @default(cuid())
-  userId      String    @unique    // One resume per user
-  user        User      @relation(fields: [userId], references: [id])
-  content     String    @db.Text // Markdown content
+  userId      String    // Multiple resumes per user
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  content     String    @db.Text // Markdown content or extracted text from upload
+  title       String?   // Custom title for the resume
+  sourceType  String    @default("builder") // "builder" or "uploaded"
+  fileName    String?   // Original file name if uploaded
+  fileUrl     String?   // URL to uploaded file in storage
   atsScore    Float?
   feedback    String?
+  isActive    Boolean   @default(false) // Which resume is currently active
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  
+  @@index([userId])
+  @@index([userId, isActive])
 }
 
 model CoverLetter {
