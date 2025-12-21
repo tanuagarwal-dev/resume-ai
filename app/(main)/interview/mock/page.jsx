@@ -3,6 +3,8 @@ import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Quiz from "../_components/quiz";
 
+export const dynamic = "force-dynamic";
+// was prerendering in build without clerk publishable key which gave errors
 export default function MockInterviewPage() {
   return (
     <div className="container mx-auto space-y-4 py-6">

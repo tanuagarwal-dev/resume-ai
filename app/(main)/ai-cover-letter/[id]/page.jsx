@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { getCoverLetter } from "@/actions/cover-letter";
 import CoverLetterPreview from "../_components/cover-letter-preview";
 
+export const dynamic = "force-dynamic";
+
 export default async function EditCoverLetterPage({ params }) {
   const { id } = await params;
   const coverLetter = await getCoverLetter(id);
