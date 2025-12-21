@@ -1,7 +1,0 @@
-export default {
-  extends: ["next/core-web-vitals"],
-  rules: {
-    "react/no-unescaped-entities": "off",
-  },
-  ignorePatterns: [".next", "node_modules", "dist", "build"],
-};
