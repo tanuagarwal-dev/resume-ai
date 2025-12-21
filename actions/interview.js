@@ -2,14 +2,26 @@
 
 import { db } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
-import { GoogleGenerativeAI } from "@google/generative-ai";
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "models/gemini-2.5-flash" });
+import { aiJson, aiText } from "@/lib/ai";
+import { quizSchema } from "@/lib/ai-schemas";
+import { rateLimit } from "@/lib/rateLimit";
 
 export async function generateQuiz() {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
+
+  // Check rate limit
+  const limitResult = rateLimit(userId, "generateQuiz", {
+    limit: 3,
+    windowMs: 60000,
+  });
+  if (!limitResult.allowed) {
+    throw new Error(
+      `Rate limit exceeded. Try again in ${Math.ceil(
+        limitResult.remainingMs / 1000
+      )} seconds.`
+    );
+  }
 
   const user = await db.user.findUnique({
     where: { clerkUserId: userId },
@@ -30,13 +42,13 @@ export async function generateQuiz() {
     
     Each question should be multiple choice with 4 options.
     
-    Return the response in this JSON format only, no additional text:
+    Return ONLY valid JSON, no markdown or additional text:
     {
       "questions": [
         {
           "question": "string",
           "options": ["string", "string", "string", "string"],
-          "correctAnswer": "string",
+          "correctAnswer": "string (must match one of options)",
           "explanation": "string"
         }
       ]
@@ -44,16 +56,11 @@ export async function generateQuiz() {
   `;
 
   try {
-    const result = await model.generateContent(prompt);
-    const response = result.response;
-    const text = response.text();
-    const cleanedText = text.replace(/```(?:json)?\n?/g, "").trim();
-    const quiz = JSON.parse(cleanedText);
-
+    const quiz = await aiJson(prompt, quizSchema, { retries: 2 });
     return quiz.questions;
   } catch (error) {
     console.error("Error generating quiz:", error);
-    throw new Error("Failed to generate quiz questions");
+    throw new Error("Failed to generate quiz questions. Please try again.");
   }
 }
 
@@ -75,35 +82,27 @@ export async function saveQuizResult(questions, answers, score) {
     explanation: q.explanation,
   }));
 
-  // Get wrong answers
+  // Get wrong answers for improvement tips
   const wrongAnswers = questionResults.filter((q) => !q.isCorrect);
 
-  // Only generate improvement tips if there are wrong answers
+  // Generate improvement tip if there are wrong answers
   let improvementTip = null;
   if (wrongAnswers.length > 0) {
     const wrongQuestionsText = wrongAnswers
-      .map(
-        (q) =>
-          `Question: "${q.question}"\nCorrect Answer: "${q.answer}"\nUser Answer: "${q.userAnswer}"`
-      )
-      .join("\n\n");
+      .map((q) => `- ${q.question} (You answered: ${q.userAnswer})`)
+      .join("\n");
 
-    const improvementPrompt = `
-      The user got the following ${user.industry} technical interview questions wrong:
+    const improvementPrompt = `A user answered these questions incorrectly in an interview prep quiz:
 
-      ${wrongQuestionsText}
+${wrongQuestionsText}
 
-      Based on these mistakes, provide a concise, specific improvement tip.
-      Focus on the knowledge gaps revealed by these wrong answers.
-      Keep the response under 2 sentences and make it encouraging.
-      Don't explicitly mention the mistakes, instead focus on what to learn/practice.
-    `;
+Based on these mistakes, provide a concise, specific improvement tip.
+Focus on the knowledge gaps revealed by these wrong answers.
+Keep the response under 2 sentences and make it encouraging.
+Don't explicitly mention the mistakes, instead focus on what to learn/practice.`;
 
     try {
-      const tipResult = await model.generateContent(improvementPrompt);
-
-      improvementTip = tipResult.response.text().trim();
-      console.log(improvementTip);
+      improvementTip = await aiText(improvementPrompt, { retries: 1 });
     } catch (error) {
       console.error("Error generating improvement tip:", error);
       // Continue without improvement tip if generation fails
@@ -117,7 +116,7 @@ export async function saveQuizResult(questions, answers, score) {
         quizScore: score,
         questions: questionResults,
         category: "Technical",
-        improvementTip,
+        improvementTip: improvementTip || undefined,
       },
     });
 

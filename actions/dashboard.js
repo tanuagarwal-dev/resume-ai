@@ -2,10 +2,9 @@
 
 import { db } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
-import { GoogleGenerativeAI } from "@google/generative-ai";
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "models/gemini-2.5-flash" });
+import { aiJson } from "@/lib/ai";
+import { insightsSchema } from "@/lib/ai-schemas";
+import { cacheGet, cacheSet } from "@/lib/cache";
 
 export const generateAIInsights = async (industry) => {
   const prompt = `
@@ -28,12 +27,14 @@ export const generateAIInsights = async (industry) => {
           Include at least 5 skills and trends.
         `;
 
-  const result = await model.generateContent(prompt);
-  const response = result.response;
-  const text = response.text();
-  const cleanedText = text.replace(/```(?:json)?\n?/g, "").trim();
+  const cacheKey = `insights:${industry}`;
+  const cached = cacheGet(cacheKey);
+  if (cached) return cached;
 
-  return JSON.parse(cleanedText);
+  const json = await aiJson(prompt, insightsSchema, { retries: 1 });
+  // Cache for 6 hours
+  cacheSet(cacheKey, json, 6 * 60 * 60 * 1000);
+  return json;
 };
 
 export async function getIndustryInsights() {
@@ -49,8 +50,12 @@ export async function getIndustryInsights() {
 
   if (!user) throw new Error("User not found");
 
-  // If no insights exist, generate them
-  if (!user.industryInsight) {
+  // If no insights exist or expired, generate them
+  const now = new Date();
+  if (
+    !user.industryInsight ||
+    (user.industryInsight?.nextUpdate && now > user.industryInsight.nextUpdate)
+  ) {
     const insights = await generateAIInsights(user.industry);
 
     const industryInsight = await db.industryInsight.create({

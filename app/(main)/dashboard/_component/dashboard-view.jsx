@@ -81,7 +81,7 @@ const DashboardView = ({ insights }) => {
 
       {/* Market Overview Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
+        <Card data-testid="market-outlook-card">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Market Outlook
@@ -89,7 +89,9 @@ const DashboardView = ({ insights }) => {
             <OutlookIcon className={`h-4 w-4 ${outlookColor}`} />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{insights.marketOutlook}</div>
+            <div className="text-2xl font-bold" data-testid="outlook-value">
+              {insights.marketOutlook}
+            </div>
             <p className="text-xs text-muted-foreground">
               Next update {nextUpdateDistance}
             </p>
@@ -144,7 +146,7 @@ const DashboardView = ({ insights }) => {
       </div>
 
       {/* Salary Ranges Chart */}
-      <Card className="col-span-4">
+      <Card className="col-span-4" data-testid="salary-chart">
         <CardHeader>
           <CardTitle>Salary Ranges by Role</CardTitle>
           <CardDescription>
@@ -194,9 +196,13 @@ const DashboardView = ({ insights }) => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <ul className="space-y-4">
+            <ul className="space-y-4" data-testid="trends-list">
               {insights.keyTrends.map((trend, index) => (
-                <li key={index} className="flex items-start space-x-2">
+                <li
+                  key={index}
+                  className="flex items-start space-x-2"
+                  data-testid="trend-item"
+                >
                   <div className="h-2 w-2 mt-2 rounded-full bg-primary" />
                   <span>{trend}</span>
                 </li>
@@ -211,9 +217,9 @@ const DashboardView = ({ insights }) => {
             <CardDescription>Skills to consider developing</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2" data-testid="skills-list">
               {insights.recommendedSkills.map((skill) => (
-                <Badge key={skill} variant="outline">
+                <Badge key={skill} variant="outline" data-testid="skill-item">
                   {skill}
                 </Badge>
               ))}

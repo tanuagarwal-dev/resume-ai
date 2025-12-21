@@ -70,9 +70,27 @@ export default function Quiz() {
     const score = calculateScore();
     try {
       await saveQuizResultFn(quizData, answers, score);
-      toast.success("Quiz completed!");
+      toast.success("Quiz completed successfully! 🎉");
     } catch (error) {
-      toast.error(error.message || "Failed to save quiz results");
+      const errorMessage =
+        error.message || "Failed to save quiz results. Please try again.";
+      toast.error(errorMessage);
+      console.error("Quiz completion error:", error);
+    }
+  };
+
+  const handleGenerateQuiz = async () => {
+    try {
+      await generateQuizFn();
+      toast.promise(Promise.resolve(), {
+        success: "Quiz loaded! Start answering questions.",
+        error: "Failed to generate quiz",
+      });
+    } catch (error) {
+      const errorMessage =
+        error.message || "Failed to generate quiz. Please try again.";
+      toast.error(errorMessage);
+      console.error("Quiz generation error:", error);
     }
   };
 
@@ -110,8 +128,13 @@ export default function Quiz() {
           </p>
         </CardContent>
         <CardFooter>
-          <Button onClick={generateQuizFn} className="w-full">
-            Start Quiz
+          <Button
+            onClick={handleGenerateQuiz}
+            className="w-full"
+            disabled={generatingQuiz}
+          >
+            {generatingQuiz && <BarLoader color="currentColor" />}
+            {!generatingQuiz && "Start Quiz"}
           </Button>
         </CardFooter>
       </Card>
@@ -123,12 +146,14 @@ export default function Quiz() {
   return (
     <Card className="mx-2">
       <CardHeader>
-        <CardTitle>
+        <CardTitle data-testid="question-counter">
           Question {currentQuestion + 1} of {quizData.length}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <p className="text-lg font-medium">{question.question}</p>
+        <p className="text-lg font-medium" data-testid="quiz-question">
+          {question.question}
+        </p>
         <RadioGroup
           onValueChange={handleAnswer}
           value={answers[currentQuestion]}

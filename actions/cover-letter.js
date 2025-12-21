@@ -2,10 +2,8 @@
 
 import { db } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
-import { GoogleGenerativeAI } from "@google/generative-ai";
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "models/gemini-2.5-flash" });
+import { aiText } from "@/lib/ai";
+import { rateLimit } from "@/lib/rateLimit";
 
 export async function generateCoverLetter(data) {
   const { userId } = await auth();
@@ -43,9 +41,15 @@ export async function generateCoverLetter(data) {
     Format the letter in markdown.
   `;
 
+  const rl = rateLimit(userId, "generateCoverLetter", {
+    limit: 3,
+    windowMs: 60_000,
+  });
+  if (!rl.allowed)
+    throw new Error("Rate limit exceeded. Please try again later.");
+
   try {
-    const result = await model.generateContent(prompt);
-    const content = result.response.text().trim();
+    const content = await aiText(prompt, { retries: 1 });
 
     const coverLetter = await db.coverLetter.create({
       data: {

@@ -150,7 +150,7 @@ export default function LandingPage() {
       </section>
 
       {/* FAQ Section */}
-      <section className="w-full py-12 md:py-24 dark:bg-none bg-white">
+      <section className="w-full py-12 md:py-24  bg-white dark:bg-background text-gray-900 dark:text-gray-200">
         <div className="container mx-auto px-4 md:px-6">
           <div className="text-center max-w-3xl mx-auto mb-12">
             <h2 className="text-3xl font-bold mb-4">
