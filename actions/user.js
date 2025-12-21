@@ -94,3 +94,88 @@ export async function getUserOnboardingStatus() {
     throw new Error("Failed to check onboarding status");
   }
 }
+
+export async function getCurrentUser() {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+
+  const user = await db.user.findUnique({
+    where: { clerkUserId: userId },
+  });
+
+  if (!user) throw new Error("User not found");
+  return user;
+}
+
+export async function getIndustryList() {
+  const industries = await db.industryInsight.findMany({
+    select: { industry: true },
+    orderBy: { industry: "asc" },
+  });
+  return industries.map((i) => i.industry);
+}
+
+export async function updateUserProfile(data) {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+
+  const user = await db.user.findUnique({ where: { clerkUserId: userId } });
+  if (!user) throw new Error("User not found");
+
+  const nextIndustry = data.industry?.trim() || user.industry;
+  const skillsArray = Array.isArray(data.skills)
+    ? data.skills
+    : typeof data.skills === "string"
+    ? data.skills
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean)
+    : user.skills;
+
+  // Precompute insights if industry changed and the insight doesn't exist
+  let precomputedInsights = null;
+  if (nextIndustry && nextIndustry !== user.industry) {
+    const exists = await db.industryInsight.findUnique({
+      where: { industry: nextIndustry },
+      select: { industry: true },
+    });
+    if (!exists) {
+      precomputedInsights = await generateAIInsights(
+        nextIndustry,
+        skillsArray || []
+      );
+    }
+  }
+
+  const result = await db.$transaction(async (tx) => {
+    if (precomputedInsights) {
+      await tx.industryInsight.create({
+        data: {
+          industry: nextIndustry,
+          ...precomputedInsights,
+          nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        },
+      });
+    }
+
+    const updatedUser = await tx.user.update({
+      where: { id: user.id },
+      data: {
+        name: data.name ?? user.name,
+        bio: data.bio ?? user.bio,
+        experience:
+          typeof data.experience === "number"
+            ? data.experience
+            : user.experience,
+        skills: skillsArray ?? user.skills,
+        industry: nextIndustry,
+      },
+    });
+
+    return updatedUser;
+  });
+
+  revalidatePath("/profile");
+  revalidatePath("/dashboard");
+  return result;
+}
