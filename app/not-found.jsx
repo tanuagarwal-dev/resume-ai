@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
+// Prevent static prerender failures due to auth/provider requirements
+export const dynamic = "force-dynamic";
+
 export default function NotFound() {
   return (
     <div className="flex flex-col items-center justify-center min-h-[100vh] px-4 text-center">
