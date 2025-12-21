@@ -69,6 +69,12 @@ async function main() {
           "Kubernetes",
           "Python",
         ],
+        skillGap: [
+          "GenAI/LLM Integration",
+          "Machine Learning",
+          "Advanced AWS",
+          "System Design",
+        ],
         lastUpdated: new Date(),
         nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       },

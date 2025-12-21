@@ -91,6 +91,7 @@ model IndustryInsight {
   
   // Learning suggestions
   recommendedSkills String[]  // Skills recommended for the industry
+  skillGap      String[]  // High-priority emerging skills to learn
   
   lastUpdated   DateTime  @default(now())
   nextUpdate    DateTime  // Scheduled update time

@@ -21,7 +21,11 @@ import { checkUser } from "@/lib/checkUser";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 export default async function Header() {
-  await checkUser();
+  try {
+    await checkUser();
+  } catch (e) {
+    // Gracefully skip user bootstrap when Clerk middleware is not matched (e.g., static assets like sw.js)
+  }
 
   return (
     <header className="fixed top-0 w-full border-b bg-background/80 backdrop-blur-md z-50 supports-[backdrop-filter]:bg-background/60">
