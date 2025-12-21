@@ -27,6 +27,7 @@ model User {
   assessments   Assessment[]
   resume        Resume?
   coverLetter   CoverLetter[]
+  jobMatches    JobMatch[]
 }
 
 model Assessment {
@@ -97,4 +98,36 @@ model IndustryInsight {
   nextUpdate    DateTime  // Scheduled update time
 
   @@index([industry])
+}
+
+model JobMatch {
+  id              String    @id @default(cuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Job details
+  jobTitle        String
+  companyName     String
+  jobDescription  String    @db.Text
+  
+  // Analysis results
+  atsScore        Float     // 0-100 overall ATS compatibility score
+  matchPercentage Float     // 0-100 how well resume matches JD
+  
+  // Keyword analysis
+  matchedKeywords String[]  // Keywords found in resume
+  missingKeywords String[]  // Keywords missing from resume
+  
+  // Detailed feedback
+  suggestions     Json[]    // Array of {type: string, message: string, priority: "high"|"medium"|"low"}
+  alignmentNotes  String?   @db.Text  // Detailed alignment analysis
+  improvementTips String[]  // Actionable tips to improve match
+  
+  // Metadata
+  resumeSnapshot  String?   @db.Text  // Snapshot of resume content used for analysis
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@index([userId])
+  @@index([createdAt])
 }
