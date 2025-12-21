@@ -65,6 +65,7 @@ export default function ResumeBuilder({ initialContent }) {
 
   // Update preview content when form values change
   useEffect(() => {
+    // eslint-disable react-hooks/exhaustive-deps
     if (activeTab === "edit") {
       const newContent = getCombinedContent();
       setPreviewContent(newContent ? newContent : initialContent);

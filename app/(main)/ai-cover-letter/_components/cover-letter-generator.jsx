@@ -39,7 +39,6 @@ export default function CoverLetterGenerator() {
     fn: generateLetterFn,
     data: generatedLetter,
   } = useFetch(generateCoverLetter);
-
   // Update content when letter is generated
   useEffect(() => {
     if (generatedLetter) {
@@ -47,6 +46,7 @@ export default function CoverLetterGenerator() {
       router.push(`/ai-cover-letter/${generatedLetter.id}`);
       reset();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [generatedLetter]);
 
   const onSubmit = async (data) => {

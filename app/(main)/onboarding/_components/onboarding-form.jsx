@@ -64,8 +64,8 @@ const OnboardingForm = ({ industries }) => {
       console.error("Onboarding error:", error);
     }
   };
-
   useEffect(() => {
+    // eslint-disable react-hooks/exhaustive-deps
     if (updateResult?.success && !updateLoading) {
       toast.success("Profile completed successfully!");
       router.push("/dashboard");
