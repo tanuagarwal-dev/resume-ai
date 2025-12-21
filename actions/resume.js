@@ -7,7 +7,7 @@ import { revalidatePath } from "next/cache";
 
 const model = null; // centralized in lib/ai
 
-export async function saveResume(content) {
+export async function saveResume(content, title = "My Resume") {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
 
@@ -18,16 +18,25 @@ export async function saveResume(content) {
   if (!user) throw new Error("User not found");
 
   try {
-    const resume = await db.resume.upsert({
+    // Create a new resume entry from the builder
+    const resume = await db.resume.create({
+      data: {
+        userId: user.id,
+        content,
+        title,
+        sourceType: "builder",
+        isActive: true,
+      },
+    });
+
+    // Deactivate other resumes
+    await db.resume.updateMany({
       where: {
         userId: user.id,
+        id: { not: resume.id },
       },
-      update: {
-        content,
-      },
-      create: {
-        userId: user.id,
-        content,
+      data: {
+        isActive: false,
       },
     });
 
@@ -49,11 +58,110 @@ export async function getResume() {
 
   if (!user) throw new Error("User not found");
 
-  return await db.resume.findUnique({
+  // Get the active resume, or the most recently created
+  return await db.resume.findFirst({
     where: {
       userId: user.id,
     },
+    orderBy: [{ isActive: "desc" }, { createdAt: "desc" }],
   });
+}
+
+export async function getAllResumes() {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+
+  const user = await db.user.findUnique({
+    where: { clerkUserId: userId },
+  });
+
+  if (!user) throw new Error("User not found");
+
+  return await db.resume.findMany({
+    where: {
+      userId: user.id,
+    },
+    orderBy: [{ isActive: "desc" }, { createdAt: "desc" }],
+    select: {
+      id: true,
+      title: true,
+      sourceType: true,
+      fileName: true,
+      isActive: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+}
+
+export async function setActiveResume(resumeId) {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+
+  const user = await db.user.findUnique({
+    where: { clerkUserId: userId },
+  });
+
+  if (!user) throw new Error("User not found");
+
+  try {
+    // Deactivate all resumes
+    await db.resume.updateMany({
+      where: {
+        userId: user.id,
+      },
+      data: {
+        isActive: false,
+      },
+    });
+
+    // Activate the selected resume
+    const resume = await db.resume.update({
+      where: {
+        id: resumeId,
+      },
+      data: {
+        isActive: true,
+      },
+    });
+
+    revalidatePath("/resume");
+    return resume;
+  } catch (error) {
+    console.error("Error setting active resume:", error);
+    throw new Error("Failed to set active resume");
+  }
+}
+
+export async function deleteResume(resumeId) {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+
+  const user = await db.user.findUnique({
+    where: { clerkUserId: userId },
+  });
+
+  if (!user) throw new Error("User not found");
+
+  try {
+    const resume = await db.resume.findUnique({
+      where: { id: resumeId },
+    });
+
+    if (resume?.userId !== user.id) {
+      throw new Error("Unauthorized");
+    }
+
+    await db.resume.delete({
+      where: { id: resumeId },
+    });
+
+    revalidatePath("/resume");
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting resume:", error);
+    throw new Error("Failed to delete resume");
+  }
 }
 
 export async function improveWithAI({ current, type }) {

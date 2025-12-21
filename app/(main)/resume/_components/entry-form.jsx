@@ -36,6 +36,7 @@ export function EntryForm({ type, entries, onChange }) {
     formState: { errors },
     reset,
     watch,
+    getValues,
     setValue,
   } = useForm({
     resolver: zodResolver(entrySchema),
@@ -49,7 +50,7 @@ export function EntryForm({ type, entries, onChange }) {
     },
   });
 
-  const current = watch("current");
+  // Avoid React Compiler warning by reading current via getValues on render
 
   const handleAdd = handleValidation((data) => {
     const formattedEntry = {
@@ -89,7 +90,7 @@ export function EntryForm({ type, entries, onChange }) {
 
   // Replace handleImproveDescription with this
   const handleImproveDescription = async () => {
-    const description = watch("description");
+    const description = getValues("description");
     if (!description) {
       toast.error("Please enter a description first");
       return;
@@ -181,7 +182,7 @@ export function EntryForm({ type, entries, onChange }) {
                 <Input
                   type="month"
                   {...register("endDate")}
-                  disabled={current}
+                  disabled={getValues("current")}
                   error={errors.endDate}
                 />
                 {errors.endDate && (
@@ -225,7 +226,7 @@ export function EntryForm({ type, entries, onChange }) {
               variant="ghost"
               size="sm"
               onClick={handleImproveDescription}
-              disabled={isImproving || !watch("description")}
+              disabled={isImproving || !getValues("description")}
             >
               {isImproving ? (
                 <>

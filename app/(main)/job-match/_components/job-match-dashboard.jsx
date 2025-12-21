@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   getJobMatches,
   deleteJobMatch,
@@ -34,11 +34,7 @@ export default function JobMatchDashboard() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [matchToDelete, setMatchToDelete] = useState(null);
 
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       setLoading(true);
       const [matchesData, statsData] = await Promise.all([
@@ -49,15 +45,17 @@ export default function JobMatchDashboard() {
       setStats(statsData);
 
       // Auto-select the most recent match if none selected
-      if (!selectedMatch && matchesData.length > 0) {
-        setSelectedMatch(matchesData[0]);
-      }
+      setSelectedMatch((prev) => (prev ? prev : matchesData[0] || null));
     } catch (error) {
       toast.error(error.message || "Failed to load data");
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   const handleNewMatch = async (newMatch) => {
     await loadData();

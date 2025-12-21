@@ -28,11 +28,15 @@ export async function createJobMatch(data) {
 
   const user = await db.user.findUnique({
     where: { clerkUserId: userId },
-    include: { resume: true },
+    include: { resumes: true },
   });
 
   if (!user) throw new Error("User not found");
-  if (!user.resume) throw new Error("Please create a resume first");
+
+  // Get the active resume
+  const activeResume =
+    user.resumes?.find((r) => r.isActive) || user.resumes?.[0];
+  if (!activeResume) throw new Error("Please create or upload a resume first");
 
   const { jobTitle, companyName, jobDescription } = data;
 
@@ -45,7 +49,7 @@ export async function createJobMatch(data) {
   try {
     // Perform AI analysis
     const analysis = await analyzeJobMatch(
-      user.resume.content,
+      activeResume.content,
       jobDescription,
       jobTitle,
       companyName,
@@ -66,7 +70,7 @@ export async function createJobMatch(data) {
         suggestions: analysis.suggestions,
         alignmentNotes: analysis.alignmentNotes,
         improvementTips: analysis.improvementTips,
-        resumeSnapshot: user.resume.content,
+        resumeSnapshot: activeResume.content,
       },
     });
 

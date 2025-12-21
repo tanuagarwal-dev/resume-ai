@@ -65,15 +65,14 @@ const OnboardingForm = ({ industries }) => {
     }
   };
   useEffect(() => {
-    // eslint-disable react-hooks/exhaustive-deps
     if (updateResult?.success && !updateLoading) {
       toast.success("Profile completed successfully!");
       router.push("/dashboard");
       router.refresh();
     }
-  }, [updateResult, updateLoading]);
+  }, [updateResult, updateLoading, router]);
 
-  const watchIndustry = watch("industry");
+  // Use local state instead of watch to avoid compiler warning
 
   return (
     <div className="flex items-center justify-center bg-background">
@@ -121,7 +120,7 @@ const OnboardingForm = ({ industries }) => {
               )}
             </div>
 
-            {watchIndustry && (
+            {selectedIndustry && (
               <div className="space-y-2">
                 <Label htmlFor="subIndustry">Specialization</Label>
                 <Select
