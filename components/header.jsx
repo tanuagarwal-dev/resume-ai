@@ -43,7 +43,7 @@ export default async function Header() {
 
         {/* Action Buttons */}
         <div className="flex items-center space-x-2 md:space-x-4">
-          <ThemeToggle />
+          {/* <ThemeToggle /> */}
           <SignedIn>
             <Link href="/dashboard">
               <Button

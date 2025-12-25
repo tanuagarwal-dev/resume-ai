@@ -1,34 +1,34 @@
 export const testimonial = [
   {
     quote:
-      "ResumeAI’s mock interviews and instant feedback helped me fix my weak answers. I cracked my first product-based company interview!",
-    author: "Aarav Mehta",
-    image: "https://randomuser.me/api/portraits/men/32.jpg",
-    role: "Final-Year CS Student",
-    company: "Tier-1 Tech Firm",
+      "The ATS-ready resume builder took my CV from average to shortlist-ready. I got interviews within a week.",
+    author: "Kabir Singh",
+    image: "https://randomuser.me/api/portraits/men/61.jpg",
+    role: "Junior Backend Engineer",
+    company: "InnovateX Labs",
   },
   {
     quote:
-      "The ATS optimization feature completely changed my resume. I finally started getting callbacks within days.",
-    author: "Priya Sharma",
-    image: "https://randomuser.me/api/portraits/women/65.jpg",
-    role: "Software Developer",
-    company: "FinTech Startup",
+      "Job Match + skill-gap insights made my prep focused. I secured a data analyst internship after targeting the right skills.",
+    author: "Meera Iyer",
+    image: "https://randomuser.me/api/portraits/women/47.jpg",
+    role: "Data Analyst Intern",
+    company: "NeoBank",
   },
   {
     quote:
-      "ResumeAI’s industry insights gave me clarity on salaries and in-demand skills. Switching roles felt much more confident and planned.",
-    author: "Rohan Verma",
-    image: "https://randomuser.me/api/portraits/men/71.jpg",
-    role: "Product Analyst",
-    company: "SaaS Company",
+      "Mock interviews with real-time feedback stopped me from rambling. My answers became crisp and structured — huge boost in confidence.",
+    author: "Arjun Nair",
+    image: "https://randomuser.me/api/portraits/men/12.jpg",
+    role: "Product Designer",
+    company: "Craftly Studio",
   },
   {
     quote:
-      "The resume feedback felt like advice from a real recruiter. My profile finally started standing out on LinkedIn and job portals.",
-    author: "Ananya Gupta",
-    image: "https://randomuser.me/api/portraits/women/43.jpg",
-    role: "Marketing Specialist",
-    company: "Digital Agency",
+      "The tailored cover letters matched the JD perfectly. I started getting replies on LinkedIn and email within days.",
+    author: "Sara Khan",
+    image: "https://randomuser.me/api/portraits/women/28.jpg",
+    role: "Growth Marketer",
+    company: "Nimbus SaaS",
   },
 ];

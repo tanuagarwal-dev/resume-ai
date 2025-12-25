@@ -3,7 +3,7 @@ import JobMatchDashboard from "./_components/job-match-dashboard";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export const metadata = {
-  title: "Job Match Analysis | AI Career Coach",
+  title: "Job Match Analysis | Resume AI",
   description:
     "Analyze how well your resume matches job descriptions with AI-powered ATS scoring",
 };

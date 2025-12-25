@@ -62,20 +62,20 @@ export default function LandingPage() {
         <div className="container mx-auto px-4 md:px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto text-center">
             <div className="flex flex-col items-center justify-center space-y-2">
-              <h3 className="text-4xl font-bold">50+</h3>
-              <p className="text-muted-foreground">Industries Covered</p>
+              <h3 className="text-4xl font-bold">10k+</h3>
+              <p className="text-muted-foreground">Resumes Optimized</p>
             </div>
             <div className="flex flex-col items-center justify-center space-y-2">
-              <h3 className="text-4xl font-bold">1000+</h3>
-              <p className="text-muted-foreground">Interview Questions</p>
+              <h3 className="text-4xl font-bold">1.5k+</h3>
+              <p className="text-muted-foreground">Mock Interview Prompts</p>
             </div>
             <div className="flex flex-col items-center justify-center space-y-2">
-              <h3 className="text-4xl font-bold">95%</h3>
-              <p className="text-muted-foreground">Success Rate</p>
+              <h3 className="text-4xl font-bold">85%</h3>
+              <p className="text-muted-foreground">Users See Improvement</p>
             </div>
             <div className="flex flex-col items-center justify-center space-y-2">
-              <h3 className="text-4xl font-bold">24/7</h3>
-              <p className="text-muted-foreground">AI Support</p>
+              <h3 className="text-4xl font-bold">Under 1 min</h3>
+              <p className="text-muted-foreground">Avg. AI Response Time</p>
             </div>
           </div>
         </div>
@@ -87,7 +87,7 @@ export default function LandingPage() {
           <div className="text-center max-w-3xl mx-auto mb-12">
             <h2 className="text-3xl font-bold mb-4">How It Works</h2>
             <p className="text-muted-foreground">
-              Four simple steps to accelerate your career growth
+              Four steps to fast-track your career
             </p>
           </div>
 

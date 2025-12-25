@@ -1,4 +1,4 @@
-# AI Career Coach
+# RESUME AI
 
 An AI-powered career assistant built with Next.js that helps users craft resumes and cover letters, practice interviews, and view industry insights. It integrates Clerk for authentication, Prisma with PostgreSQL (Neon) for persistence, Google Gemini for AI, and Inngest for scheduled background tasks.
 

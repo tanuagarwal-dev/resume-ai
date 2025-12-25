@@ -1,32 +1,32 @@
 export const faqs = [
   {
-    question: "What makes ResumeAI unique as a career development tool?",
+    question: "What is Resume AI and why use it?",
     answer:
-      "ResumeAI combines AI-powered career tools with industry-specific insights to help you advance your career. Our platform offers three main features: an intelligent resume builder, a cover letter generator, and an adaptive interview preparation system. Each tool is tailored to your industry and skills, providing personalized guidance for your professional journey.",
+      "It’s a focused toolkit for job seekers: ATS-ready resumes, tailored cover letters, Job Match with skill-gap insights, and mock interviews with instant feedback—all personalized to your goals and industry.",
   },
   {
-    question: "How does ResumeAI create tailored content?",
+    question: "How does Job Match and skill-gap analysis help?",
     answer:
-      "ResumeAI learns about your industry, experience, and skills during onboarding. It then uses this information to generate customized resumes, cover letters, and interview questions. The content is specifically aligned with your professional background and industry standards, making it highly relevant and effective.",
+      "We read the job description, compare it with your profile, and surface the missing skills. You’ll get targeted suggestions and resources so your prep is efficient and relevant.",
   },
   {
-    question: "How accurate and up-to-date are ResumeAI's industry insights?",
+    question: "What does ATS optimization do for my resume?",
     answer:
-      "We update our industry insights weekly using advanced AI analysis of current market trends. This includes salary data, in-demand skills, and industry growth patterns. Our system constantly evolves to ensure you have the most relevant information for your career decisions.",
+      "Your resume is structured for Applicant Tracking Systems: clean sections, role-aligned keywords, and measurable bullet points—improving the chance of passing automated screening.",
   },
   {
-    question: "Is my data secure with ResumeAI?",
+    question: "Is my data secure?",
     answer:
-      "Absolutely. We prioritize the security of your professional information. All data is encrypted and securely stored using industry-standard practices. We use Clerk for authentication and never share your personal information with third parties.",
+      "Yes. We use secure auth (Clerk), encrypt data at rest and in transit, and never share your info with third parties. You can review or delete your data anytime from settings.",
   },
   {
-    question: "How can I track my interview preparation progress?",
+    question: "How do mock interviews and progress tracking work?",
     answer:
-      "ResumeAI tracks your performance across multiple practice interviews, providing detailed analytics and improvement suggestions. You can view your progress over time, identify areas for improvement, and receive AI-generated tips to enhance your interview skills based on your responses.",
+      "Practice sessions simulate real interviews for your role. After each, you’ll see strengths, gaps, and tips. Over time, analytics chart improvements in clarity, structure, and confidence.",
   },
   {
     question: "Can I edit the AI-generated content?",
     answer:
-      "Yes! While ResumeAI generates high-quality initial content, you have full control to edit and customize all generated resumes, cover letters, and other content. Our markdown editor makes it easy to refine the content to perfectly match your needs.",
+      "Absolutely. Treat AI outputs as strong drafts—you can refine resumes, cover letters, and notes to match your voice and achievements.",
   },
 ];
