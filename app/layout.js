@@ -23,7 +23,7 @@ export default function RootLayout({ children }) {
   const appShell = (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <link rel="icon" href="/logo.png" sizes="any" />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
       </head>
       <body className={`${inter.className}`}>
         <ThemeProvider
